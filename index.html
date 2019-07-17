@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>table自定义组件正常渲染的table</title>
+    <script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script src="js/ytTable.js" type="text/javascript"></script>
+    <style type="text/css">
+        .table, .table * {margin: 0 auto; padding: 0;font-size: 14px;}
+        .table {display: table; width: 99%; border-collapse: collapse;}
+        .table-tr {display: table-row; height: 30px;}
+        .table-th {
+            display: table-cell;
+            font-weight: bold;
+            height: 100%;
+            border: 1px solid #cdcdcd;
+            text-align: center;
+            vertical-align: middle;
+            height: 41px;
+            padding-right: 5px;
+            background-color: #eeeeee;
+            color: #333;
+        }
+        #tableList{
+            max-width: 1600px;
+            overflow: auto;
+        }
+        #tableList .table-td {display: table-cell;border: 1px solid #cdcdcd; text-align: center;vertical-align: middle;height: 41px;}
+        .table-1{
+            margin:10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="table-1">
+            正常显示的table：
+        </div>
+        <div id="tableList"></div>
+    </div>
+</body>
+<script type="text/javascript">
+    $.getJSON ("./data/ytTableData.json", function (data){
+        // 获取到data数据
+        let tableListData = data.remove_data;
+        // 处理data数据
+        let resData = handleData(tableListData);
+        // 获取到要展示的动态列（如果是固定的就不需要这一步操作）
+        let monthArray = [];
+        tableListData.map(item => {
+            monthArray.push(item.month)
+        });
+        // 定义列
+        let columns = [
+            { data: 'title', title: ''}
+        ];
+        // 动态添加
+        monthArray.map(function (e, item) {
+            columns.push({data:e, title:e,defaultContent: 0});
+        });
+        $('#tableList').ytTable({
+            paging:false,
+            info:false,
+            ordering:false,
+            serverSide:false,
+            destroy:false,
+            data:resData,
+            columns:columns,
+        })
+
+    });
+    // 数据处理方法
+    function handleData(data) {
+        let res = []
+        if(Array.isArray(data)){
+            let chap={title:'差评总数'}
+            let yc={title:'移除数量'}
+            let ycRate={title:'移除比例'}
+            let bnTotal = 0
+            let rnTotal=0
+            let rrTotal=0
+            for(let i=0;i<data.length;i++){
+                let obj = data[i]
+                let month = obj.month
+                let bad_num = parseInt(obj.bad_num)
+                let remove_num = parseInt(obj.remove_num)
+                let remove_rate = parseFloat(obj.remove_rate)
+                //先转换为数字
+                bad_num = isNaN(bad_num)?0:bad_num
+                remove_num = isNaN(remove_num)?0:remove_num
+                remove_rate = isNaN(remove_rate)?0:remove_rate
+                bnTotal += bad_num
+                rnTotal += remove_num
+                rrTotal += remove_rate
+                chap[month] = bad_num
+                yc[month] = remove_num
+                ycRate[month] = remove_rate + ' %'
+            }
+            chap['total'] = bnTotal
+            yc['total'] = rnTotal
+            ycRate['total'] = rrTotal + ' %'
+            res = [chap,yc,ycRate]
+        }
+        return res
+    }
+</script>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>table自定义组件树形table</title>
+    <script src="js/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script src="js/ytTreeTable.js" type="text/javascript"></script>
+    <style type="text/css">
+        @font-face {font-family: "iconfont";
+            src: url('//at.alicdn.com/t/font_1280809_qsq9ksxn9cl.eot?t=1562401453740'); /* IE9 */
+            src: url('//at.alicdn.com/t/font_1280809_qsq9ksxn9cl.eot?t=1562401453740#iefix') format('embedded-opentype'), /* IE6-IE8 */
+            url('data:application/x-font-woff2;charset=utf-8;base64,d09GMgABAAAAAAPkAAsAAAAACDgAAAOYAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDHAqDeIM9ATYCJAMQCwoABCAFhG0HQRsoB8iemjxZtG348WtgkiyABcKQ/zWX7+9ucgCgroCggdECubICkkBCEdhO/XV8dCtUfvLPej/xrPXKlfSzYDATeDJZn1TKNVFfdR2ATqXAA/zl3v837KiI4qwE4zUA78I2dZZISGs0QMAk8D/uHf+RZVE2n2UBpbz2Oh8TMErTgPamMYEDKRBsGLtqKQ7qOBBALyyX1G3vHQUdAY8jAE3tViPoMhqiIZ9oEbliaQo6QkYbNxXfANgPfk9/KE4HMFICfFJdv80CjS+N0qIs/5d6yQqq6UwA1FUAByQDCKBhpWWAMookU9LbvVVyAbS0GEzVVvZq+a8i3lEkWmIF2OA/j3LgXCMAyIZRDoqGMYGBUsapkrZA3gMcJQCAFmADuAS8ARODsvUYqSASckmx0Tq42LYauj65dmswbZ9Zv9NTG8ngBvam+s5Ouw6R7PD01o1TRbb2ueT9256xg4d6Woy63q+72YGri2OnZuMpo5dHu8QOrN9vu2StOOMWeXlya1KqiB6GWpZOxAjTRpaq+GBmOEudIG1yGkb3HRgMYm1eZYKaHXSwYPjXSlQbtkatRLZiWyQc+PqQxj+Qeq4H5QcbsHxKfuQoyk+9ecR3wlKNrRFnf8Ti9P7xSAzbc3w/EwmQMCn67HS6nH46IWmxpfwGeei9Y2nEdOyDYHzi6fS2jNNPn01HtmBL5PXSD4XMF2fq/5K/wYbPxak6va5QbfxUlDXuKdmtXriqK9U3qlrqXUkPPt7/GNVUHpfVaY8qbT7GI+ADANRP5ZOyAkBd5RflBlB/lT/K2F88DLvG8wu9Ee2vOsMjtkTbV88FbnVV6M79T1yb+0O5HWuEw8dakVoCxnHJQg3uW9JAn/B/YwKwez2FzQWQiWg1LgRGIwScVgQRhGSQGGSDTKsM9JJ0rDZw4JQo1QFItA0AsboAjNkbcFa3EEF4BRK3LyCzpgS9ltDY0iA2O+lwahTUgqZltJu9Hkb1goT5w9QadBl5mh9QDJQH7H4syi/Mxzuoh/IpZgQWrMVCMGTc68Z2cBp1ubzo414HNYt8mxC+6oICVvWmfLPXDUQVjjISKAtksgzZmXl5MNFcIIXvD6OsglyMeENBm9WA4gLsnaMi+Qo7IB0ST6eCW7kmYIFVMUFgEMN5uaF2YKJcJOKFfNWDHCgzIZ9tQMinWgFqxLpK8peXud+wDC+xCF4sAiNOgiRIS6N9KagR0iLFXAwA') format('woff2'),
+            url('//at.alicdn.com/t/font_1280809_qsq9ksxn9cl.woff?t=1562401453740') format('woff'),
+            url('//at.alicdn.com/t/font_1280809_qsq9ksxn9cl.ttf?t=1562401453740') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+            url('//at.alicdn.com/t/font_1280809_qsq9ksxn9cl.svg?t=1562401453740#iconfont') format('svg'); /* iOS 4.1- */
+        }
+        .yt-table-header-sort {
+            font-family: "iconfont" !important;
+            font-size: 16px;
+            font-style: normal;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .yt-table-sort:before {
+            content: "\e606";
+
+        }
+
+        .yt-table-sort-up:before {
+            content: "\e635";
+
+        }
+
+        .yt-table-sort-down:before {
+            content: "\e643";
+        }
+        .table, .table * {margin: 0 auto; padding: 0;font-size: 14px;}
+        .table {display: table; width: 99%; border-collapse: collapse;}
+        .table-tr {display: table-row; height: 30px;}
+        .table-th {
+            display: table-cell;
+            font-weight: bold;
+            height: 100%;
+            border: 1px solid #cdcdcd;
+            text-align: center;
+            vertical-align: middle;
+            height: 41px;
+            padding-right: 5px;
+            background-color: #eeeeee;
+            color: #333;
+        }
+        #tableListTree{
+            overflow: auto;
+            border: 0px solid #cdcdcd;
+        }
+        #tableListTree .table-td {display: table-cell; height: 100%;border: 1px solid #cdcdcd; text-align: center;vertical-align: middle;height: 51px}
+
+        .table-tree{
+            font-size: 20px;
+            position: absolute;
+            margin-top: -5px;
+            margin-left: 20px;
+            cursor: default;
+        }
+        .table-1{
+            margin:10px 10px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="table-1">
+            treeTable：
+        </div>
+        <div id="tableListTree"></div>
+    </div>
+</body>
+<script type="text/javascript">
+    $.getJSON ("./data/ytTreeTableData.json", function (data){
+        let monthArray = [];
+        let remove_dataArr = data.remove_data;
+        if(Array.isArray(remove_dataArr) && remove_dataArr.length > 0) {
+            monthArray = remove_dataArr[0].son[0].month_data;
+        }
+        renderReviewTable(remove_dataArr,monthArray);
+    })
+    function renderReviewTable(data,monthArray) {
+        that = this;
+        var renderOper=function(data, type, item,field){
+            var result = $('<div></div>')
+            let obj = $('<div class="sub_row ranks-desc operate-row "></div>')
+            if(item.id && item.id != '--'){
+                let edit = $('<a href="javascript:;"  title="编辑"  class="fa fa-edit operate-add" style="margin-right: 20px;"></a>').appendTo(obj)
+                let show = $('<a href="javascript:;"  title="查看" class="fa fa-list operate-show"></a></div>').appendTo(obj)
+                edit.on('click',function(){
+                    that.editOrAdd(item)
+                });
+                show.on('click',function(){
+                    that.showInfo(item)
+                })
+            }else if(item.id != '--'){
+                let add = $('<a href="javascript:;"  title="新增"  class="fa fa-plus operate-add" style="margin-right: 20px;"></a>').appendTo(obj)
+                let show = $('<a href="javascript:;"  title="查看" class="fa fa-list operate-show"></a></div>').appendTo(obj)
+                add.on('click',function(){
+                    that.editOrAdd(item)
+                })
+                show.on('click',function(){
+                    that.showInfo(item)
+                })
+            }
+            obj.appendTo(result)
+            return result
+        }
+        var renderFirst=function(data, type, rowData,field){
+            var v = rowData[field]
+            v = typeof v ==='undefined' || v===null || v===''?'--':v
+            return '<div class="sub_row ranks-desc">' + v + '</div>'
+        }
+        var newData=[]
+        data.forEach(item=>{
+            let {son,first_id,first_name} = item
+            if(Array.isArray(son)&&son.length>0){
+                let first = son[0]
+                let children=[]
+                let x = {first_name:first_name,first_id:first_id}
+                son.forEach((obj,index)=>{
+                    let no = Object.assign(obj,{first_name:first_name,first_id:first_id})
+                    Object.keys(obj).forEach(n=>{
+                        x[n]='--'
+                    })
+
+                    let {month_data} = obj
+                    if(Array.isArray(month_data)){
+                        month_data.forEach(y=>{
+                            let {month,num} = y
+                            // no[month] = num
+                            if(month == '投诉占比') {
+                                no[month] = num == '0%' ? '0.00%' : num;
+                            }else{
+                                no[month] = num
+                            }
+                            let nx = parseFloat(num)
+                            nx=isNaN(nx)?0:nx
+                            let znx = parseFloat(x[month])
+                            znx = isNaN(znx)?0:znx
+                            if(month == '投诉占比') {
+                                x[month] = (znx+nx).toFixed(2) + '%'
+                            }else{
+                                x[month] = (znx+nx)
+                            }
+
+                        })
+                    }
+
+                    children.unshift(no)
+                })
+                x['children']=children
+                x['first_name']=first_name
+                newData.push(x)
+            }
+        })
+        var columns = [];
+        columns = [
+            { data: 'first_name',tree:true, sort:true,title: '不良类型（一级标签）',defaultContent: 0,render:(data, type, rowData)=> renderFirst(data, type, rowData,'first_name'),width:'200'},
+            { data: 'second_name', sort:true, title: '不良现象（二级标签）',defaultContent: 0,}
+        ];
+
+        monthArray.map(function (e, item) {
+            columns.push({data:e.month, title:e.month,defaultContent: 0,});
+
+        });
+        columns.push({data:'reason', title:'原因分析',defaultContent: 0,});
+        columns.push({data:'strategy', title:'改善策略',defaultContent: 0,});
+        columns.push({data:'user', title:'责任人',defaultContent: 0,});
+        columns.push({data:'improve_date', title:'改善品导入日期',defaultContent: 0,});
+        columns.push({data:'improve_po', title:'改善品导入PO',defaultContent: 0,});
+        columns.push({data:'improve_sn', title:'改善品导入SN码',defaultContent: 0,});
+        columns.push({data:'operate', title:'操作',defaultContent: 0,render: (data, type, rowData)=> renderOper(data, type, rowData,'operate')});
+
+        var dataTable = $('#tableListTree').ytTreeTable({
+            paging: false,
+            info: false,
+            ordering: false,
+            serverSide: false,
+            destroy: true,
+            data: newData,
+            columns: columns,
+            columnDefs: [],
+        })
+        $('#tableListTree').on('sort',function(e,data){
+            // 排序
+        })
+    }
+</script>
+</html>
